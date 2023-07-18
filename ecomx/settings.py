@@ -25,7 +25,7 @@ from django.contrib import messages
 SECRET_KEY = 'django-insecure-f=ciu3hnc$*&6_5%p#9yeu#6$_q7m*)l1$f@7+pm=q^7-uv&in'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ecommerceapp',
-    'authCart'
+    'authCart',
+
 ]
 
 MIDDLEWARE = [
@@ -132,7 +133,7 @@ EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 
-
+CACHE_TTL = 60 * 5
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -160,8 +161,31 @@ MESSAGE_TAGS={
 }
 
 CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+PERFORMANCE_LIMITS = {
+    'test method': {
+        'queries': {'total': 50},  # want to keep the tests focused
+        'time': {'total': 0.2},  # want fast integrated tests, so aiming for 1/5 seconds
+    },
+    'django.test.client.Client': {
+        'queries': {
+            'read': 30,
+            'write': 8,  # do not create complex object structures in the web
+                         # process
+        },
+    },
+    'Template.render': {
+        'queries': {
+            'write': 0,  # rendering a template should never write to the database!
+            'read': 0
+        }
     }
 }

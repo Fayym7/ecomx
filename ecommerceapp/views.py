@@ -10,21 +10,26 @@ from django.views.decorators.csrf import  csrf_exempt
 from PayTm import Checksum
 from django.core.cache import cache
 
+from django.conf import settings
+
 # Create your views here.
 def index(request):
     allProds = []
     catprods = Product.objects.values('category','id')
     print(catprods)
     cats = {item['category'] for item in catprods}
-    if cats[0] in cache:
-        allProds=cache.get_many(cats)
-    else:
-        for cat in cats:
+    cats=list(cats)
+    #cache.get_many(['x','y']) ~~~ to get many key-value also in ".set_many"
+    for cat in cats:
+        if cat in cache:
+            print('Fetching cached value with expiry time =',settings.CACHE_TTL,'seconds')
+            prod=cache.get(cat)
+        else:
             prod= Product.objects.filter(category=cat)
             cache.set(cat,prod)
-            n=len(prod)
-            nSlides = n // 4 + ceil((n / 4) - (n // 4))
-            allProds.append([prod, range(1, nSlides), nSlides])
+        n=len(prod)
+        nSlides = n // 4 + ceil((n / 4) - (n // 4))
+        allProds.append([prod, range(1, nSlides), nSlides])
 
     params= {'allProds':allProds}
 
