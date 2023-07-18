@@ -11,7 +11,7 @@ from django.conf import settings
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth import authenticate,login,logout
-
+from django.core.mail import EmailMultiAlternatives
 #force_text is replaces with force_str
 # Create your views here.
 def signup(request):
@@ -40,12 +40,12 @@ def signup(request):
             'token':generate_token.make_token(user)
 
         })
-
-        # email_message = EmailMessage(email_subject,message,settings.EMAIL_HOST_USER,[email])
-        # email_message.send()
-        # messages.success(request,f"Activate Your Account by clicking the link in your gmail {message}")
-        # return redirect('/auth/login/')
-        return HttpResponse(message)
+        email_message = EmailMultiAlternatives(email_subject,'',settings.EMAIL_HOST_USER,[email])
+        email_message.attach_alternative(message, "text/html")
+        email_message.send()
+        messages.success(request,f"Activate Your Account by clicking the link in your Email")
+        return redirect('/auth/login/')
+        # return HttpResponse(message)
      return render(request,"signup.html")
 
 

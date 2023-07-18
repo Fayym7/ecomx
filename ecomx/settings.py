@@ -118,20 +118,20 @@ USE_TZ = True
 
 #sending emails
 #old way through google
-# EMAIL_HOST= 'smtp.gmail.com'
-# EMAIL_HOST_USER='@gmail.com'
-# EMAIL_HOST_PASSWORD = ''
-# EMAIL_PORT=587
-# EMAIL_USE_TLS=True
-# EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'\
-
-#new way
-EMAIL_HOST= 'smtpout.securenet.com'
-EMAIL_HOST_USER='xxx@yyy.com'
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST= 'smtp.gmail.com'
+EMAIL_HOST_USER='faimu4584@gmail.com'
+EMAIL_HOST_PASSWORD = 'njdlwfjzibozsshc'
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+
+#new way
+# EMAIL_HOST= 'smtpout.securenet.com'
+# EMAIL_HOST_USER='xxx@yyy.com'
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_PORT=587
+# EMAIL_USE_TLS=True
+# EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 
 CACHE_TTL = 60 * 5
 # Static files (CSS, JavaScript, Images)
