@@ -8,6 +8,7 @@ MERCHANT_KEY=keys.MK
 import json
 from django.views.decorators.csrf import  csrf_exempt
 from PayTm import Checksum
+from django.core.cache import cache
 
 # Create your views here.
 def index(request):
@@ -15,11 +16,15 @@ def index(request):
     catprods = Product.objects.values('category','id')
     print(catprods)
     cats = {item['category'] for item in catprods}
-    for cat in cats:
-        prod= Product.objects.filter(category=cat)
-        n=len(prod)
-        nSlides = n // 4 + ceil((n / 4) - (n // 4))
-        allProds.append([prod, range(1, nSlides), nSlides])
+    if cats[0] in cache:
+        allProds=cache.get_many(cats)
+    else:
+        for cat in cats:
+            prod= Product.objects.filter(category=cat)
+            cache.set(cat,prod)
+            n=len(prod)
+            nSlides = n // 4 + ceil((n / 4) - (n // 4))
+            allProds.append([prod, range(1, nSlides), nSlides])
 
     params= {'allProds':allProds}
 
