@@ -8,11 +8,12 @@ MERCHANT_KEY=keys.MK
 import json
 from django.views.decorators.csrf import  csrf_exempt
 from PayTm import Checksum
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-
 from django.conf import settings
 
 # Create your views here.
+@login_required(login_url="/auth/login/")
 def index(request):
     allProds = []
     catprods = Product.objects.values('category','id')
@@ -35,7 +36,7 @@ def index(request):
 
     return render(request,"index.html",params)
 
-    
+@login_required(login_url="/auth/login/")  
 def contact(request):
     if request.method=="POST":
         name=request.POST.get("name")
@@ -54,7 +55,7 @@ def about(request):
     return render(request,"about.html")
 
 
-
+@login_required(login_url="/auth/login/")
 def checkout(request):
     if not request.user.is_authenticated:
         messages.warning(request,"Login & Try Again")
@@ -100,6 +101,7 @@ def checkout(request):
 
 
 @csrf_exempt
+@login_required(login_url="/auth/login/")
 def handlerequest(request):
     # paytm will send you post request here
     form = request.POST
@@ -132,7 +134,7 @@ def handlerequest(request):
             print('order was not successful because' + response_dict['RESPMSG'])
     return render(request, 'paymentstatus.html', {'response': response_dict})
 
-
+@login_required(login_url="/auth/login/")
 def profile(request):
     if not request.user.is_authenticated:
         messages.warning(request,"Login & Try Again")

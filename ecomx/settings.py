@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ecommerceapp',
     'authCart',
-
+    'celery'
 ]
 
 MIDDLEWARE = [
@@ -133,6 +133,12 @@ EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_USE_TLS=True
 # EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
+#below line is crucial for celery worker to process the work -- Courtesy Stack Overflow
+os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
+
 CACHE_TTL = 60 * 5
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -170,22 +176,22 @@ CACHES = {
     }
 }
 
-PERFORMANCE_LIMITS = {
-    'test method': {
-        'queries': {'total': 50},  # want to keep the tests focused
-        'time': {'total': 0.2},  # want fast integrated tests, so aiming for 1/5 seconds
-    },
-    'django.test.client.Client': {
-        'queries': {
-            'read': 30,
-            'write': 8,  # do not create complex object structures in the web
-                         # process
-        },
-    },
-    'Template.render': {
-        'queries': {
-            'write': 0,  # rendering a template should never write to the database!
-            'read': 0
-        }
-    }
-}
+# PERFORMANCE_LIMITS = {
+#     'test method': {
+#         'queries': {'total': 50},  # want to keep the tests focused
+#         'time': {'total': 0.2},  # want fast integrated tests, so aiming for 1/5 seconds
+#     },
+#     'django.test.client.Client': {
+#         'queries': {
+#             'read': 30,
+#             'write': 8,  # do not create complex object structures in the web
+#                          # process
+#         },
+#     },
+#     'Template.render': {
+#         'queries': {
+#             'write': 0,  # rendering a template should never write to the database!
+#             'read': 0
+#         }
+#     }
+# }

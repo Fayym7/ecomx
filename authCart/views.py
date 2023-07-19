@@ -8,7 +8,7 @@ from .utils import TokenGenerator,generate_token
 from django.utils.encoding import force_bytes,force_str,DjangoUnicodeDecodeError
 from django.core.mail import EmailMessage
 from django.conf import settings
-
+from .tasks import send_feedback_email_task
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth import authenticate,login,logout
 from django.core.mail import EmailMultiAlternatives
@@ -40,9 +40,7 @@ def signup(request):
             'token':generate_token.make_token(user)
 
         })
-        email_message = EmailMultiAlternatives(email_subject,'',settings.EMAIL_HOST_USER,[email])
-        email_message.attach_alternative(message, "text/html")
-        email_message.send()
+        send_feedback_email_task.delay(email_subject,email,message)
         messages.success(request,f"Activate Your Account by clicking the link in your Email")
         return redirect('/auth/login/')
         # return HttpResponse(message)
